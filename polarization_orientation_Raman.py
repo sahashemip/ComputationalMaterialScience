@@ -18,46 +18,47 @@
 			sahashemip@gmail.com
 '''
 
-import yaml
-import numpy as np
-import matplotlib.pyplot as plt
-from typing import Optional
 from pathlib import Path
+from typing import Optional
+
+import matplotlib.pyplot as plt
+import numpy as np
+import yaml
 
 class InputParser:
-	'''
+    '''
 	Parses input file give in path to input_file.
 	
 	Methods:
-		-
-		-
+		- read_input
+		- parse_raman_tensors
 		-
 		-
 		
 	Attributes:
-		-
+		- input_file: Path to input_file
 		-
 		-
 	
 	Example Usage:
-		
-	'''
-	
-	def __init__(self, input_file: Path) -> None:
-		'''
-		Intializes class RamanScattering with path of input_file.
-		'''
-		#TODO Path or str
-		if not isinstance(input_file, Path):
-			raise TypeError('Expected "input_file" to be a Path object')
 
-		if not input_file.exists():
-			raise FileNotFoundError(f'File {input_file} does not exist!')
-		
-		self.input_file = input_file
-		
-	def read_input(self) -> Optional[dict]:
-		'''
+    '''
+
+    def __init__(self, input_file: Path) -> None:
+        '''
+        Intializes class RamanScattering with path of input_file.
+        '''
+        #TODO Path or str
+        if not isinstance(input_file, Path):
+            raise TypeError('Expected "input_file" to be a Path object')
+
+        if not input_file.exists():
+            raise FileNotFoundError(f'File {input_file} does not exist!')
+
+        self.input_file = input_file
+
+    def read_input(self) -> Optional[dict]:
+        '''
         Reads the input file and returns its content as a dictionary.
 
         Returns:
@@ -66,115 +67,145 @@ class InputParser:
         Raises:
             ValueError: If the file content is not a valid YAML format.
             OSError: If the file is not found.
-		'''
-		try:
-			with open(self.input_file, 'r') as inpfile:
-				return yaml.safe_load(inpfile)
+        '''
 
-		except yaml.YAMLError as e:
-			raise yaml.scanner.ScannerError(f'Error in {self.input_file}!', e)
-		
-		except FileNotFoundError as e:
-			raise OSError(f'File {self.input_file} not found!')
+        try:
+            with open(self.input_file, 'r') as inpfile:
+                return yaml.safe_load(inpfile)
+        
+        except yaml.YAMLError as e:
+            raise yaml.scanner.ScannerError(f'Error in {self.input_file}!', e)
+        
+        except FileNotFoundError as e:
+            raise OSError(f'File {self.input_file} not found!')
 
-	def parse_raman_tensors(self) -> any:
-		'''
-		Returns 3x3 Raman tensors in a list.
-		Raises a KeyError if the 'ramantensor'key not found in the
-		 input yaml file.
-		'''
-		inp_data = self.read_input()
-		raman_tensors = []
-		raman_tensor_key = 'ramantensor'
-		
-		try:
-			raman_tensors_ = inp_data[raman_tensor_key]
-			
-			for key in raman_tensors_.keys():
-				raman_tensor_of_each_key = raman_tensors_[key]
-				
-				if not np.array(raman_tensor_of_each_key).shape == (3, 3):
-					raise ValueError('Matrix shape is not 3x3!')
-				raman_tensors.append(raman_tensor_of_each_key)
-			
-			return raman_tensors
-			
-		except KeyError:
-			raise KeyError(f"Key '{raman_tensor_key}' not found in input!")
+    def parse_raman_tensors(self) -> any:
+        '''
+        Returns a list of 3x3 Raman tensors.
+        Raises a KeyError if the 'ramantensor'key not found in
+        the input yaml file.
+        '''
+        raman_tensors = []
+        raman_tensor_key = 'ramantensor'
+        
+        try:
+            raman_tensors_ = self.read_input()[raman_tensor_key]
+            
+            for key in raman_tensors_.keys():
+                raman_tensor_of_each_key = raman_tensors_[key]
+                
+                if not np.array(raman_tensor_of_each_key).shape == (3, 3):
+                    raise ValueError('Matrix shape is not 3x3!')
+                raman_tensors.append(raman_tensor_of_each_key)
 
-			
+            return raman_tensors
 
+        except KeyError:
+            raise KeyError(f"Key '{raman_tensor_key}' not found in input!")
+
+    def parse_propagation_vectors(self) -> any:
+        """
+        Returns a list of  3x1 matrices.
+        Raises a KeyError if the 'propagationvector'key not found in
+        the input yaml file.
+        """
+        propagation_vectors = []
+        propagat_vector_key = 'propagationvector'
+        
+        try:
+            propagat_vectors_ = self.read_input()[propagat_vector_key]
+            
+            for key in propagat_vectors_.keys():
+                propagat_vector_of_each_key = propagat_vectors_[key]
+                
+                if not np.array(propagat_vector_of_each_key).shape == (3,):
+                    raise ValueError('Matrix shape is not 3x1!')
+                propagation_vectors.append(propagat_vector_of_each_key)
+
+            return propagation_vectors
+
+        except KeyError:
+            raise KeyError(f"Key '{propagat_vector_key}' not found in input!")
+
+    def parse_polarization_vectors(self) -> any:
+        """
+        Returns a 3x1 matrix in list.
+        Raises a KeyError if the 'polarizationvector'key not found in
+        the input yaml file.
+        """
+        polarization_vectors = []
+        polarization_vector_key = 'polarizationvector'
+        
+        try:
+            polarization_vectors_ = self.read_input()[polarization_vector_key]
+            
+            for key in polarization_vectors_.keys():
+                polarization_vectors_each_key = polarization_vectors_[key]
+                
+                if not np.array(polarization_vectors_each_key).shape == (3,):
+                    raise ValueError('Matrix shape is not 3x1!')
+                polarization_vectors.append(polarization_vectors_each_key)
+
+            return polarization_vectors
+
+        except KeyError:
+            raise KeyError(f"Key '{polarization_vector_key}' not found in input!")
+
+
+class MathTools:
+    '''
+    Performs several linear algebra.
+    
+	Methods:
+		- get_normalized_vector
+		- 
+		-
+		-
+	
+	Example Usage:
+	  
+    '''
+    @staticmethod
+    def get_normalized_vector(input_arr: np.ndarray) -> np.ndarray:
+        '''Normalizes the input NumPy array'''
+        norm_of_array = np.linalg.norm(input_arr)
+        if norm_of_array == 0:
+            return input_arr
+        return input_arr / norm_of_array
+
+    @staticmethod
+    def make_orthogonal(vector1: np.ndarray, vector2: np.ndarray):
+        '''Calculates the projection of vector1 onto vector2'''
+        return vector1 - np.dot(vector1, vector2) * vector2
+    
+    #Should we normalize each vector first?
+    @staticmethod
+    def create_coordinate_system(vector1: np.ndarray, vector2: np.ndarray):
+        norm_vector1 = get_normalized_vector(vector1)
+        norm_vector2 = get_normalized_vector(vector2)
+        vector3 = np.cross(vector1, vector2)
+        
+        if vector3 == 0:
+            raise ValueError('Coordinate system in not generated by parallel bases.')
+        norm_vector3 = get_normalized_vector(vector3)
+
+        return np.array([norm_vector1, norm_vector2, norm_vector3])
+
+    #TODO: what does this vector does?    
+    @staticmethod
+    def get_beam_polarization(basis_set: np.ndarray,
+                                material_coord: np.ndarray,
+                                axis: np.ndarray):
+        new_basis_inv = np.linalg.inv(basis_set)
+        return np.dot(np.dot(np.dot(new_basis_inv, material_coord), basis_set), axis.T)
 
 parsereader = InputParser(Path('input.yaml'))
-print(parsereader.parse_raman_tensors())
+mathtools = MathTools.get_normalized_vector(np.array([3, 4, 5]))
+
+#print(parsereader.parse_polarization_vectors())
 #print(parsereader.read_input())
 '''
 class RamanScattering:
-	"""
-	
-	"""
-
-	
-
-
-
-		
-	def parse_propagation_vectors(self) -> list:
-		"""
-		
-		"""
-		propagation_vectors = []
-		propagation_vector_data = self.read_input()['propagationvector']
-		for key in propagation_vector_data.keys():
-			propagation_vectors.append(propagation_vector_data[key])
-		return propagation_vectors
-
-	def parse_polarization_vectors(self) -> list:
-		"""
-		
-		"""
-		polarization_vectors = []
-		polarization_vector_data = self.read_input()['polarizationvector']
-		for key in polarization_vector_data.keys():
-			polarization_vectors.append(polarization_vector_data[key])
-		return polarization_vectors
-
-	@staticmethod
-	def normalize_vector(vector: np.ndarray) -> np.ndarray:
-		return vector / np.linalg.norm(vector)
-
-	@staticmethod
-	def make_polarization_orthogonal(polarization: np.ndarray, propagation: np.ndarray):
-		return polarization - np.dot(polarization, propagation) * propagation
-
-	@staticmethod
-	def form_coordinate_system(basis_1: np.ndarray, basis_2: np.ndarray):
-		basis_3 = np.cross(basis_1, basis_2)
-		return np.array([basis_1, basis_3, basis_2])
-
-	@staticmethod
-	def get_beam_polarization(basis_set: np.ndarray, material_coord: np.ndarray, axis: np.ndarray):
-		new_basis_inv = np.linalg.inv(basis_set)
-		return np.dot(np.dot(np.dot(new_basis_inv, material_coord), basis_set), axis.T)
-
-	#@staticmethod
-	def compute_parallel_raman(self, basis_set: np.ndarray, axis: np.ndarray, max_angle: int):
-		print(max_angle)
-		intensity = np.zeros(max_angle)
-		print(intensity)
-		alpha_range = np.arange(max_angle) / 180 * np.pi
-		for i, alpha in enumerate(alpha_range):
-			material_coord = np.array(
-			[[np.cos(alpha), -np.sin(alpha), 0],
-			[np.sin(alpha), np.cos(alpha), 0],
-			[0, 0, 1]]
-			)
-			
-			ei = RamanScattering.get_beam_polarization(basis_set, material_coord, axis)
-			
-			for R in self.parse_raman_tensors():
-				intensity[i] += np.abs(np.dot(np.dot(ei.T, np.array(R)), ei))**2
-		return np.column_stack((alpha_range, intensity))
 
 	def compute_perpendicualr_raman(basis_set: np.ndarray, axis1: np.ndarray, axis2: np.ndarray, max_angle: int=360):
 		intensity = np.zeros(max_angle)
@@ -192,7 +223,26 @@ class RamanScattering:
 			for R in self.parse_raman_tensors():
 				intensity[i] += np.abs(np.dot(np.dot(es.T, np.array(R)), ei))**2
 		return np.column_stack((alpha_range, intensity))
-	
+
+
+	def compute_parallel_raman(self, basis_set: np.ndarray, axis: np.ndarray, max_angle: int):
+		print(max_angle)
+		intensity = np.zeros(max_angle)
+		print(intensity)
+		alpha_range = np.arange(max_angle) / 180 * np.pi
+		for i, alpha in enumerate(alpha_range):
+			material_coord = np.array(
+			[[np.cos(alpha), -np.sin(alpha), 0],
+			[np.sin(alpha), np.cos(alpha), 0],
+			[0, 0, 1]]
+			)
+			
+			ei = RamanScattering.get_beam_polarization(basis_set, material_coord, axis)
+			
+			for R in self.parse_raman_tensors():
+				intensity[i] += np.abs(np.dot(np.dot(ei.T, np.array(R)), ei))**2
+		return np.column_stack((alpha_range, intensity))
+			
 	@staticmethod
 	def make_polarplot(alpha, intensity, output_fig: Path='polarplot,png'):
 		normal_intensity = intensity / np.max(intensity)
