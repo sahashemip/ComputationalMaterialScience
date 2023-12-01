@@ -1,0 +1,23 @@
+ramantensor:
+#
+propagationvector:
+ qs1:
+  - 3
+  - 1
+  - 1
+#
+ qs2:
+  - 1
+  - 0
+  - 0
+#
+ qs3:
+  - 1
+  - 1
+  - 1
+#
+polarizationvector:
+ axis1:
+  - 1
+  - 0
+  - 0
