@@ -1,54 +1,44 @@
 '''
-	The code compute polarization-orientation Raman intensity.
-	
-	Classes:
-		- RamanScattering
-		-
-		-
-	
-	Methods:
-		-
-		-
-		-
-		
-	Example Usage:
-	
-	
-	Author: Arsalan Hahsemi
-			sahashemip@gmail.com
+    The code compute polarization-orientation Raman intensity.
+
+    Classes:
+        - InputParser
+        - MathTools
+        - RamanCalculator
+
+    Example Usage:
+        - python polarization_orientation_Raman.py -i input.yaml -p
+
+    Author: Arsalan Hahsemi
+            sahashemip@gmail.com
 '''
 
+import argparse
 from pathlib import Path
-from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
 import yaml
 
+
 class InputParser:
     '''
-	Parses input file give in path to input_file.
-	
-	Methods:
-		- read_input
-		- parse_raman_tensors
-		-
-		-
-		
-	Attributes:
-		- input_file: Path to input_file
-		-
-		-
-	
-	Example Usage:
+        Parses input file give in path to input_file.
 
+        Methods:
+            - read_input
+            - parse_raman_tensors
+            - parse_propagation_vectors
+            - parse_polarization_vectors
+
+    Attributes:
+            - input_file: Path to input_file
     '''
 
     def __init__(self, input_file: Path) -> None:
         '''
         Intializes class RamanScattering with path of input_file.
         '''
-        #TODO Path or str
         if not isinstance(input_file, Path):
             raise TypeError('Expected "input_file" to be a Path object')
 
@@ -57,7 +47,7 @@ class InputParser:
 
         self.input_file = input_file
 
-    def read_input(self) -> Optional[dict]:
+    def read_input(self) -> any:
         '''
         Reads the input file and returns its content as a dictionary.
 
@@ -72,11 +62,11 @@ class InputParser:
         try:
             with open(self.input_file, 'r') as inpfile:
                 return yaml.safe_load(inpfile)
-        
-        except yaml.YAMLError as e:
+
+        except yaml.YAMLError:
             raise yaml.scanner.ScannerError(f'Error in {self.input_file}!', e)
-        
-        except FileNotFoundError as e:
+
+        except FileNotFoundError:
             raise OSError(f'File {self.input_file} not found!')
 
     def parse_raman_tensors(self) -> any:
@@ -87,7 +77,7 @@ class InputParser:
         '''
         raman_tensors = []
         raman_tensor_key = 'ramantensor'
-        
+
         try:
             raman_tensors_ = self.read_input()[raman_tensor_key]
             
@@ -189,20 +179,30 @@ class MathTools:
         return np.array([vector2, vector3, vector1])
 
     @staticmethod
-    def rotate_material_coordinare_around_z(alpha: float) -> np.ndarray:
-        ''' Return a rotated coordinate system around z-axis'''
-        return np.array([[np.cos(alpha), -np.sin(alpha), 0],
-                         [np.sin(alpha), np.cos(alpha), 0], 
-                         [0, 0, 1]],)
+    def rotate_material_coordinare_around_z(alphas: np.ndarray) -> np.ndarray:
+        ''' Return a rotated coordinate system around z-axis
+            alphas (np.ndarray): An array of angles in radians.
+        '''
+        cos_alphas, sin_alphas = np.cos(alphas), np.sin(alphas)
+        rotation_matrices = np.zeros((len(alphas), 3, 3))
+        
+        rotation_matrices[:, 0, 0] = cos_alphas
+        rotation_matrices[:, 0, 1] = -sin_alphas
+        rotation_matrices[:, 1, 0] = sin_alphas
+        rotation_matrices[:, 1, 1] = cos_alphas
+        rotation_matrices[:, 2, 2] = 1       
+        
+        return rotation_matrices
 
-    #TODO: what does this vector does?    
+
+    #TODO: Vectorize it to speed up the calculations?
     @staticmethod
     def get_beam_polarization_vector(basis_set: np.ndarray,
                                      material_coord: np.ndarray, axis: np.ndarray):
         '''Returns polarization vector as a 3x1 array'''
 
         return np.linalg.inv(basis_set) @ material_coord @ basis_set @ axis.T
-
+                                     
     @staticmethod
     def compute_raman(vector1: np.ndarray, tensor: np.ndarray,
                         vector2: np.ndarray,) -> float:
@@ -265,12 +265,12 @@ class RamanCalculator:
         
         m = self.mathtools.rotate_material_coordinare_around_z(alphas_in_radian)
         
-        for i, polvect in enumerate(polarization_vectors):
-            for j, propvect in enumerate(propagation_vectors):
+        for i, polarization_vector in enumerate(polarization_vectors):
+            for j, propagation_vector in enumerate(propagation_vectors):
                 
-                norm_propvect = self.mathtools.get_normalized_vector(propvect)
+                norm_propvect = self.mathtools.get_normalized_vector(propagation_vector)
                 
-                axis1 = self.mathtools.make_orthogonal(polvect, norm_propvect)
+                axis1 = self.mathtools.make_orthogonal(polarization_vector, norm_propvect)
                 norm_axis1 = self.mathtools.get_normalized_vector(axis1)
 
                 axis2 = np.cross(norm_propvect, norm_axis1)
@@ -281,7 +281,7 @@ class RamanCalculator:
                 
 
                 for k, alpha in enumerate(alphas):
-                    
+                
                     
                     ei = self.mathtools.get_beam_polarization_vector(nb, m[k], norm_axis1)
                     es = self.mathtools.get_beam_polarization_vector(nb, m[k], axis2)
@@ -300,21 +300,27 @@ class RamanCalculator:
                                                     intensities=intensity_hv,
                                                     output_fig=f'fig-{i}-{j}.png',
                                                     color='red', label='HV')
+                    plt.figure().clear()
+
+#raman = RamanCalculator(InputParser(Path('input.yaml')), MathTools(), is_plotting=True)
+#raman.compute_polarization_orientation_raman()
 
 
+parser = argparse.ArgumentParser(description="Run Raman Calculator")
 
+parser.add_argument('-i', '--input', type=str, required=True, help="Path to input.yaml file")
+parser.add_argument('-p', '--plot', action='store_true', help="Enable plotting")
 
+# Step 3: Parse arguments
+args = parser.parse_args()
 
+input_path = Path(args.input)
+is_plotting = args.plot
 
-raman = RamanCalculator(InputParser(Path('input.yaml')), MathTools(), is_plotting=True)
+raman = RamanCalculator(InputParser(input_path), MathTools(), is_plotting=is_plotting)
 raman.compute_polarization_orientation_raman()
-#print(parsereader.parse_polarization_vectors())
-#print(parsereader.read_input())
-
-"""			
 
 
-"""
 
 	
 	
