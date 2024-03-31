@@ -1,0 +1,15 @@
+  - [0, 1, 0]
+  - [1, 0, 0]
+  - [0, 0, 0]
+#
+propagationvector:
+ qs1:
+  - 1
+  - 3
+  - 1
+#
+polarizationvector:
+ axis1:
+  - 0
+  - 1
+  - 0
