@@ -6,7 +6,7 @@ import yaml
 
 class InputParser:
     '''
-        Parses input file give in path to input_file.
+        Parses input file given in a path to input_file.
 
         Methods:
             - read_input
@@ -20,10 +20,10 @@ class InputParser:
 
     def __init__(self, input_file: Path) -> None:
         '''
-        Initializes class RamanScattering with path of input_file.
+        Initializes class InputParser with path of input_file.
         '''
         if not isinstance(input_file, Path):
-            raise TypeError('Expected "input_file" to be a Path object')
+            raise TypeError('Expected "input_file" to be a Path object!')
 
         if not input_file.exists():
             raise FileNotFoundError(f'File {input_file} does not exist!')
@@ -32,14 +32,14 @@ class InputParser:
 
     def read_input(self) -> any:
         '''
-        Reads the input file and returns its content as a dictionary.
+        Reads the input file and returns its content as a dictionary if
+        its structure is correct. Otherwise it shows an error.
 
         Returns:
             dict|None : The content of the YAML file.
 
         Raises:
             ValueError: If the file content is not a valid YAML format.
-            OSError: If the file is not found.
         '''
 
         try:
@@ -49,14 +49,11 @@ class InputParser:
         except yaml.YAMLError:
             raise yaml.scanner.ScannerError(f'Error in {self.input_file}!')
 
-        except FileNotFoundError:
-            raise OSError(f'File {self.input_file} not found!')
-
     def parse_raman_tensors(self) -> any:
         '''
-        Returns a list of 3x3 Raman tensors.
-        Raises a KeyError if the 'ramantensor'key not found in
-        the input yaml file.
+        Returns a list of 3x3 Raman tensor.
+        Raises a KeyError if the 'ramantensor' key not found in
+        the input yaml file. Otherwise displays an error.
         '''
         raman_tensors = []
         raman_tensor_key = 'ramantensor'
@@ -74,14 +71,14 @@ class InputParser:
             return raman_tensors
 
         except KeyError:
-            raise KeyError(f"Key '{raman_tensor_key}' not found in input!")
+            raise KeyError(f"Key '{raman_tensor_key}' not found in the input!")
 
     def parse_propagation_vectors(self) -> any:
-        """
+        '''
         Returns a list of  3x1 matrices.
         Raises a KeyError if the 'propagationvector'key not found in
-        the input yaml file.
-        """
+        the input yaml file. Otherwise displays an error.
+        '''
         propagation_vectors = []
         propagat_vector_key = 'propagationvector'
 
@@ -106,7 +103,7 @@ class InputParser:
         """
         Returns a 3x1 matrix in list.
         Raises a KeyError if the 'polarizationvector'key not found in
-        the input yaml file.
+        the input yaml file. Otherwise displays an error.
         """
         polarization_vectors = []
         polarization_vector_key = 'polarizationvector'
