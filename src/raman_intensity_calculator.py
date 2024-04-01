@@ -119,7 +119,7 @@ class RamanCalculator:
                     utils.write_to_npzfile(
                         angles_in_radian,
                         intensity_vv,
-                        output_file=f'polvect-{i}-propvect-{j}-parallel-configuration.npz')
+                        outfile=f'polvect-{i}-propvect-{j}-parallel-configuration.npz')
                 
                 if self.configuration == 'cross' or self.configuration == 'both':
                     intensity_hv = self.__get_cross_configuration_intensity(
@@ -131,5 +131,5 @@ class RamanCalculator:
                     utils.write_to_npzfile(
                         angles_in_radian,
                         intensity_hv,
-                        output_file=f'polvect-{i}-propvect-{j}-cross-configuration.npz')
+                        outfile=f'polvect-{i}-propvect-{j}-cross-configuration.npz')
 	
