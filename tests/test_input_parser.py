@@ -1,11 +1,6 @@
-import sys
 import unittest
-from unittest.mock import patch
 from pathlib import Path
 import numpy as np
-import yaml
-
-sys.path.insert(0, '../src')
 
 from input_parser import InputParser
 
