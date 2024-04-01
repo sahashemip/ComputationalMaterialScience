@@ -1,37 +1,19 @@
-'''
-    The code compute polarization-orientation Raman intensity.
-
-    Class:
-        - RamanCalculator
-
-    Example Usage:
-        - python polarization_orientation_Raman.py -i input.yaml -p
-
-    Author: Arsalan Hahsemi
-            sahashemip@gmail.com
-'''
-
-import argparse
-from pathlib import Path
-
-import matplotlib.pyplot as plt
 import numpy as np
-
 import utils as utils
-from input_parser import InputParser as inputparser
-
 
 class RamanCalculator:
     '''
-        Computes polarization-orientation Raman intensity
+        Raman intensity for angels.
 
         Methods:
+            - __get_parallel_configuration_intensity
+            - __get_cross_configuration_intensity
             - compute_polarization_orientation_raman
-            -
 
         Attributes:
-            - inputparser: an instace of class InputParser
-            - utils: an instance of class utils
+            - upper_limit_degree: int, dafaule = 360
+            - spectrocopy_configuration: parallel, cross, both
+            - inputparser: class InputParser
     '''
 
     def __init__(self,
@@ -101,7 +83,7 @@ class RamanCalculator:
             for j, propagation_vector in enumerate(propagation_vectors):
                 
                 norm_propvect = utils.get_normalized_vector(propagation_vector)
-                
+
                 axis1 = utils.make_orthogonal(polarization_vector, norm_propvect)
                 norm_axis1 = utils.get_normalized_vector(axis1)
         
@@ -132,4 +114,3 @@ class RamanCalculator:
                         angles_in_radian,
                         intensity_hv,
                         outfile=f'polvect-{i}-propvect-{j}-cross-configuration.npz')
-	

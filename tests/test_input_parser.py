@@ -13,8 +13,8 @@ class TestInputParser(unittest.TestCase):
     '''Test the methods of InputParser calss'''
     def setUp(self):
         '''Prepare a temporary YAML file for testing.'''
-        self.temp_file = Path('./test_input.yaml')
-        self.invalid_key_file = Path('./test_invalid_input.yaml')
+        self.temp_file = Path('./input_test.yaml')
+        self.invalid_key_file = Path('./invalid_test_input.yaml')
 
     def test_init_valid_path(self):
         '''Test initialization with a valid file path.'''
@@ -82,4 +82,5 @@ class TestInputParser(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    print('Testing input_parser.py module')
     unittest.main()
