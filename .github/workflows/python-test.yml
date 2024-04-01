@@ -26,5 +26,5 @@ jobs:
       working-directory: ./tests
     
     - name: Run test for utils.py
-      run: |
-        python tests/test_utils.py
+      run: python test_utils.py
+      working-directory: ./tests
