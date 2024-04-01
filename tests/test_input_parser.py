@@ -1,6 +1,9 @@
+import sys
 import unittest
-from pathlib import Path
 import numpy as np
+from pathlib import Path
+
+sys.path.insert(0, '../src')
 
 from input_parser import InputParser
 

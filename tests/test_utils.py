@@ -1,7 +1,10 @@
 import os
+import sys
 import unittest
 from pathlib import Path
 import numpy as np
+
+sys.path.insert(0, '../src')
 
 from utils import (
     get_normalized_vector,
