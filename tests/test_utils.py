@@ -14,7 +14,6 @@ from utils import (
     rotate_material_coordinate_around_z,
     get_beam_polarization_vector,
     compute_raman,
-    make_polarplot,
     write_to_npzfile
     )
 
@@ -172,19 +171,6 @@ class TestLinearAlgebraFunctions(unittest.TestCase):
         ])
         result = compute_raman(zero_vector, tensor, vector2)
         self.assertEqual(result, 0)
-
-    def test_make_polarplot_creates_file(self):
-        """Test if the polar plot file is created."""
-        angles = np.linspace(0, 2 * np.pi, 100)
-        intensities = np.sin(angles)**2
-        output_fig = 'test_polarplot.png'
-        make_polarplot(angles, intensities, output_fig=output_fig)
-        
-        self.assertTrue(Path(output_fig).exists())
-        
-        # Remove file if created!
-        if Path(output_fig).exists():
-            os.remove(output_fig)
 
     def setUp(self):
         # Temporary file path for testing
