@@ -1,5 +1,19 @@
-# Angle Dependent Raman Intensity
-This repository offers a suite of tools to facilitate research and understanding in the field of Raman spectroscopy, specifically **angle dependent Raman spectrocopy**.
-The author follows [**SO**LID prciples](https://realpython.com/solid-principles-python/), more percisely 2 core principles of [Single-responsibility principle](https://en.wikipedia.org/wiki/Single_responsibility_principle) (SRP) and [Open–closed principle](https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle) (OCP),  for wrting a more maintainable and flexible code.
 
+<p align="center">
+  <img src="./ramani.png" alt="Logo" width="350"/>
+</p>
+
+# Angle Dependent Raman Intensity ![GitHub last commit](https://img.shields.io/github/last-commit/sahashemip/angle-dependent-Raman-intensity) ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/sahashemip/angle-dependent-Raman-intensity/total) ![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)
+
+
+
+
+
+This repository offers a suite of tools to facilitate `angle dependent Raman spectrocopy` evaluations. 
+
+### How To Use
+
+### Installation
+
+### Related 
 
