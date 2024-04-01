@@ -73,7 +73,7 @@ def make_polarplot(angles,
                   intensities,
                   output_fig: Path = 'polarplot.png',
                   color='red',
-                  label=None):
+                  label='vv'):
     '''Returns a file of polar plot.'''
     plt.polar(angles, intensities, color=color, label=label)
     plt.legend()
