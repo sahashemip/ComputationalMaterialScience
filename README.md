@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="./ramani.png" alt="Logo" width="350"/>
+  <img src="./ramani.png" alt="Logo" width="300"/>
 </p>
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/sahashemip/angle-dependent-Raman-intensity) ![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)
